@@ -21,7 +21,7 @@ Then include this library as a dependency.
 </dependency>
 ```
 
-###Getting Started
+### Getting Started
 Below is some example code to show how to read the current parts per million and alarm status for each zone.
 Bacharach documentation states that a modbus master device, such as this library, should not poll the current zone statuses more often than every 20 seconds. (Manual B.3.3.)
 
