@@ -18,7 +18,11 @@ public class CurrentZoneStatus {
 	public int getPPM() {
 		return ppm;
 	}
-	
+	/**
+	 * The {@link AlarmStatus} class is provided to provide easy translations of the alarm status codes.
+	 * Keep in mind that the level for LEAK and EVACUATE can be set different for each zone.
+	 * @return
+	 */
 	public int getAlarmStatus() {
 		return alarmStatus;
 	}	

@@ -17,9 +17,7 @@ public class TestModbusRead {
 		for (CurrentZoneStatus status : one.getAllCurrentZoneStatuses()) {			
 			System.out.println(String.format("Zone %s: %s ppm - %s alarm status", address + "", status.getPPM() + "", status.getAlarmStatus() + ""));
 			address++;
-		}
-
-		
+		}		
 	}
 
 }
