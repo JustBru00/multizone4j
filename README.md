@@ -1,3 +1,5 @@
+[![](https://jitpack.io/v/JustBru00/multizone4j.svg)](https://jitpack.io/#JustBru00/multizone4j)
+
 ### MultiZone for Java
 This library is designed to simplify modbus communications with a Bacharach Multi-Zone leak detector.   
 
