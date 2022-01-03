@@ -10,16 +10,23 @@ import com.ghgande.j2mod.modbus.util.SerialParameters;
 
 /**
  * This class represents a single Bacharach MultiZone device.
+ * This class assumes the following default Bacharach MultiZone modbus communication parameters.
+ * Mode: RTU
+ * Baud: 19200
+ * Parity: No Parity Bit
+ * Stop Bits: 1 Stop Bit
  * @author Justin Brubaker
  *
  */
 public class MultiZoneDevice {
 
 	private int modbusAddress;		
+	private String serialDeviceName;
 	
-	public MultiZoneDevice(int _modbusAddress) {
+	public MultiZoneDevice(int _modbusAddress, String _serialDeviceName) {
 		super();
 		modbusAddress = _modbusAddress;
+		serialDeviceName = _serialDeviceName;
 	}	
 	
 	/**
@@ -32,11 +39,11 @@ public class MultiZoneDevice {
 	 */
 	public CurrentZoneStatus getCurrentZoneStatus(int zoneNumber) throws ModbusException, Exception, IllegalArgumentException {
 		if (zoneNumber < 0 || zoneNumber > 15) {
-			throw new IllegalArgumentException("The zone number must be between 0-15");
+			throw new IllegalArgumentException("The zone number must be between 0-15. The zone number is base 0. Ex. Zone 1 = zoneNumber=0");
 		}
 		
 		ModbusSerialMaster master;
-		SerialParameters params = new SerialParameters("/dev/serial1", 19200, AbstractSerialConnection.FLOW_CONTROL_DISABLED,
+		SerialParameters params = new SerialParameters(serialDeviceName, 19200, AbstractSerialConnection.FLOW_CONTROL_DISABLED,
 				AbstractSerialConnection.FLOW_CONTROL_DISABLED, 8, AbstractSerialConnection.ONE_STOP_BIT, AbstractSerialConnection.NO_PARITY, false);
 		master = new ModbusSerialMaster(params);
 		master.connect();
@@ -47,7 +54,7 @@ public class MultiZoneDevice {
 		InputRegister[] alarmRegs = master.readMultipleRegisters(modbusAddress, 2017 + zoneNumber, 1);
 		int alarmLevel = alarmRegs[0].getValue();
 		
-		CurrentZoneStatus zone = new CurrentZoneStatus(ppmZone, alarmLevel);
+		CurrentZoneStatus zone = new CurrentZoneStatus(ppmZone, alarmLevel);		
 		
 		master.disconnect();
 		
@@ -64,7 +71,7 @@ public class MultiZoneDevice {
 		ArrayList<CurrentZoneStatus> zones = new ArrayList<CurrentZoneStatus>();
 		
 		ModbusSerialMaster master;
-		SerialParameters params = new SerialParameters("/dev/serial1", 19200, AbstractSerialConnection.FLOW_CONTROL_DISABLED,
+		SerialParameters params = new SerialParameters(serialDeviceName, 19200, AbstractSerialConnection.FLOW_CONTROL_DISABLED,
 				AbstractSerialConnection.FLOW_CONTROL_DISABLED, 8, AbstractSerialConnection.ONE_STOP_BIT, AbstractSerialConnection.NO_PARITY, false);
 		master = new ModbusSerialMaster(params);
 		master.connect();
@@ -74,7 +81,7 @@ public class MultiZoneDevice {
 		
 		master.disconnect();
 		
-		for (int i = 0; i > 16; i++) {
+		for (int i = 0; i < 16; i++) {
 			CurrentZoneStatus zone = new CurrentZoneStatus(ppmRegs[i].getValue(), alarmRegs[i].getValue());
 			zones.add(zone);
 		}		
