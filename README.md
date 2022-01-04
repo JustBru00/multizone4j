@@ -47,12 +47,14 @@ Bacharach documentation states that a modbus master device, such as this library
 You can view the release history and roadmap below:
 
 ### Roadmap
-- Fully implement the 2000 series, read only, Function Code 03 registers. (Manual B.4.1.)
-- Fully implement the 3000 series, read/write, Function Code 04/06 registers. (Manual B.4.2.)
-- Fully implement the block mode registers for advanced remote setup and complete detail access. (Manual B.5.)
+- Fully implement the 3000 series, read/write, Function Code 04/06 registers. (Manual Section B.4.2.)
+- Fully implement the block mode registers for advanced remote setup and complete detail access. (Manual Section B.5.)
 
 ### Release History
 ```
+Release version 0.1.0-SNAPSHOT:
++ Implemented all of the modbus registers from Manual Section B.4.1.
+
 Release version 0.1.0-SNAPSHOT:
 + Added MultiZoneDevice.getCurrentZoneStatus()
 + Added MultiZoneDevice.getAllCurrentZoneStatuses()

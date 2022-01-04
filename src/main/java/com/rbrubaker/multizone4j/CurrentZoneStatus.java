@@ -2,6 +2,8 @@ package com.rbrubaker.multizone4j;
 
 import java.time.Instant;
 
+import com.rbrubaker.multizone4j.reference.AlarmStatus;
+
 public class CurrentZoneStatus {
 
 	private int ppm = -1;
