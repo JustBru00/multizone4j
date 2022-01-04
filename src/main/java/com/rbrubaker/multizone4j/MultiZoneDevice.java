@@ -11,6 +11,7 @@ import com.ghgande.j2mod.modbus.util.SerialParameters;
 import com.rbrubaker.multizone4j.reference.AlarmStatus;
 import com.rbrubaker.multizone4j.reference.CurrentState;
 import com.rbrubaker.multizone4j.reference.OperatingMode;
+import com.rbrubaker.multizone4j.reference.RefrigerantType;
 
 /**
  * This class represents a single Bacharach MultiZone device.
@@ -37,7 +38,7 @@ public class MultiZoneDevice {
 	 * Manual Section B.4.1.
 	 * This method is blocks as it has to contact the modbus device
 	 * Gets the current zone ppm and alarm status for the given zone number.
-	 * @param zoneNumber Zone numbers start with 0. So zone 1 is zonenumber=0.
+	 * @param zoneNumber This method uses zone numbers that start with 0. So zone 1 is zonenumber=0.
 	 * @return
 	 * @throws ModbusException, Exception
 	 * 
@@ -102,7 +103,7 @@ public class MultiZoneDevice {
 	 * @throws ModbusException
 	 * @throws Exception
 	 */
-	private int readSingleFunction03RegisterAsInt(int registerNumber) throws ModbusException, Exception{
+	private int readSingleFunction03RegisterAsInt(int registerNumber) throws ModbusException, Exception {
 		ModbusSerialMaster master;
 		SerialParameters params = new SerialParameters(serialDeviceName, 19200, AbstractSerialConnection.FLOW_CONTROL_DISABLED,
 				AbstractSerialConnection.FLOW_CONTROL_DISABLED, 8, AbstractSerialConnection.ONE_STOP_BIT, AbstractSerialConnection.NO_PARITY, false);
@@ -110,6 +111,20 @@ public class MultiZoneDevice {
 		master.connect();
 		
 		InputRegister[] reg = master.readMultipleRegisters(modbusAddress, registerNumber, 1);
+		
+		master.disconnect();		
+		
+		return reg[0].getValue();		
+	}
+	
+	private int readSingleFunction04RegisterAsInt(int registerNumber) throws ModbusException, Exception {
+		ModbusSerialMaster master;
+		SerialParameters params = new SerialParameters(serialDeviceName, 19200, AbstractSerialConnection.FLOW_CONTROL_DISABLED,
+				AbstractSerialConnection.FLOW_CONTROL_DISABLED, 8, AbstractSerialConnection.ONE_STOP_BIT, AbstractSerialConnection.NO_PARITY, false);
+		master = new ModbusSerialMaster(params);
+		master.connect();
+		
+		InputRegister[] reg = master.readInputRegisters(modbusAddress, registerNumber, 1);
 		
 		master.disconnect();		
 		
@@ -369,4 +384,118 @@ public class MultiZoneDevice {
 	public int getBenchPpm() throws ModbusException, Exception {
 		return readSingleFunction03RegisterAsInt(2054);
 	}
+	
+	/**
+	 * Manual Section B.4.2.
+	 * This method blocks as it has to contact the modbus device.
+	 * @param zoneNumber This method uses zone numbers that start with 0. So zone 1 is zonenumber=0.
+	 * @return An integer representing the refrigerant type. Use {@link RefrigerantType} to decode the refrigerant type.
+	 * @throws ModbusException
+	 * @throws Exception
+	 */
+	public int getRefrigerantType(int zoneNumber) throws ModbusException, Exception, IllegalArgumentException {
+		if (zoneNumber < 0 || zoneNumber > 15) {
+			throw new IllegalArgumentException("The zone number must be between 0-15. The zone number is base 0. Ex. Zone 1 = zoneNumber=0");
+		}
+		
+		return readSingleFunction04RegisterAsInt(3000 + zoneNumber);
+	}
+	
+	/**
+	 * Manual Section B.4.2.
+	 * This method blocks as it has to contact the modbus device.
+	 * @param zoneNumber This method uses zone numbers that start with 0. So zone 1 is zonenumber=0.
+	 * @return The current leak level setpoint for the given zone.
+	 * @throws ModbusException
+	 * @throws Exception
+	 * @throws IllegalArgumentException
+	 */
+	public int getLeakLevelSetpoint(int zoneNumber) throws ModbusException, Exception, IllegalArgumentException {
+		if (zoneNumber < 0 || zoneNumber > 15) {
+			throw new IllegalArgumentException("The zone number must be between 0-15. The zone number is base 0. Ex. Zone 1 = zoneNumber=0");
+		}
+		
+		return readSingleFunction04RegisterAsInt(3016 + zoneNumber);
+	}
+	
+	/**
+	 * Manual Section B.4.2.
+	 * This method blocks as it has to contact the modbus device.
+	 * @param zoneNumber This method uses zone numbers that start with 0. So zone 1 is zonenumber=0.
+	 * @return The current spill level setpoint for the given zone.
+	 * @throws ModbusException
+	 * @throws Exception
+	 * @throws IllegalArgumentException
+	 */
+	public int getSpillLevelSetpoint(int zoneNumber) throws ModbusException, Exception, IllegalArgumentException {
+		if (zoneNumber < 0 || zoneNumber > 15) {
+			throw new IllegalArgumentException("The zone number must be between 0-15. The zone number is base 0. Ex. Zone 1 = zoneNumber=0");
+		}
+		
+		return readSingleFunction04RegisterAsInt(3032 + zoneNumber);
+	}
+	
+	/**
+	 * Manual Section B.4.2.
+	 * This method blocks as it has to contact the modbus device.
+	 * @param zoneNumber This method uses zone numbers that start with 0. So zone 1 is zonenumber=0.
+	 * @return The current evacuation level setpoint for the given zone.
+	 * @throws ModbusException
+	 * @throws Exception
+	 * @throws IllegalArgumentException
+	 */
+	public int getEvacuationLevelSetpoint(int zoneNumber) throws ModbusException, Exception, IllegalArgumentException {
+		if (zoneNumber < 0 || zoneNumber > 15) {
+			throw new IllegalArgumentException("The zone number must be between 0-15. The zone number is base 0. Ex. Zone 1 = zoneNumber=0");
+		}
+		
+		return readSingleFunction04RegisterAsInt(3048 + zoneNumber);
+	}
+	
+	/**
+	 * Manual Section B.4.2.
+	 * This method blocks as it has to contact the modbus device.
+	 * @param zoneNumber This method uses zone numbers that start with 0. So zone 1 is zonenumber=0.
+	 * @return The sample tube distance setpoint.
+	 * @throws ModbusException
+	 * @throws Exception
+	 * @throws IllegalArgumentException
+	 */
+	public int getSampleDistanceSetpoint(int zoneNumber) throws ModbusException, Exception, IllegalArgumentException {
+		if (zoneNumber < 0 || zoneNumber > 15) {
+			throw new IllegalArgumentException("The zone number must be between 0-15. The zone number is base 0. Ex. Zone 1 = zoneNumber=0");
+		}
+		
+		return readSingleFunction04RegisterAsInt(3064 + zoneNumber);
+	}
+	
+	/**
+	 * Manual Section B.4.2.
+	 * This method blocks as it has to contact the modbus device.
+	 * @param zoneNumber This method uses zone numbers that start with 0. So zone 1 is zonenumber=0.
+	 * @return The alarm acknowledge state for the given zone. 1=Acknowledged, 0=Unacknowledged
+	 * @throws ModbusException
+	 * @throws Exception
+	 * @throws IllegalArgumentException
+	 */
+	public int getAlarmAcknowledgeState(int zoneNumber) throws ModbusException, Exception, IllegalArgumentException {
+		if (zoneNumber < 0 || zoneNumber > 15) {
+			throw new IllegalArgumentException("The zone number must be between 0-15. The zone number is base 0. Ex. Zone 1 = zoneNumber=0");
+		}
+		
+		return readSingleFunction04RegisterAsInt(3080 + zoneNumber);
+	}
+	
+	/**
+	 * Manual Section B.4.2.
+	 * This method blocks as it has to contact the modbus device.
+	 * @return The alarm acknowledge state for all zones.
+	 * @throws ModbusException
+	 * @throws Exception
+	 */
+	public int getAllAlarmAcknowledgeState() throws ModbusException, Exception {
+		return readSingleFunction04RegisterAsInt(3096);
+	}
+	
+	
 }
