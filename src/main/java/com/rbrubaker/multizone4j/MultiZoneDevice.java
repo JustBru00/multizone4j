@@ -15,9 +15,9 @@ import com.rbrubaker.multizone4j.reference.RefrigerantType;
 
 /**
  * This class represents a single Bacharach MultiZone device.
- * This class assumes the Bacharach MultiZone default modbus communication parameters.
+ * This class assumes the following Bacharach MultiZone modbus communication parameters.
  * Mode: RTU
- * Baud: 19200
+ * Baud: Can be set on the Bacharach MultiZone device. The default is 19200.
  * Parity: No Parity Bit
  * Stop Bits: 1 Stop Bit
  * @author Justin Brubaker
@@ -27,11 +27,13 @@ public class MultiZoneDevice {
 
 	private int modbusAddress;		
 	private String serialDeviceName;
+	private int baudRate = 19200;
 	
-	public MultiZoneDevice(int _modbusAddress, String _serialDeviceName) {
+	public MultiZoneDevice(int _modbusAddress, String _serialDeviceName, int _baudRate) {
 		super();
 		modbusAddress = _modbusAddress;
 		serialDeviceName = _serialDeviceName;
+		baudRate = _baudRate;
 	}	
 	
 	/**
@@ -49,7 +51,7 @@ public class MultiZoneDevice {
 		}
 		
 		ModbusSerialMaster master;
-		SerialParameters params = new SerialParameters(serialDeviceName, 19200, AbstractSerialConnection.FLOW_CONTROL_DISABLED,
+		SerialParameters params = new SerialParameters(serialDeviceName, baudRate, AbstractSerialConnection.FLOW_CONTROL_DISABLED,
 				AbstractSerialConnection.FLOW_CONTROL_DISABLED, 8, AbstractSerialConnection.ONE_STOP_BIT, AbstractSerialConnection.NO_PARITY, false);
 		master = new ModbusSerialMaster(params);
 		master.connect();
@@ -78,7 +80,7 @@ public class MultiZoneDevice {
 		ArrayList<CurrentZoneStatus> zones = new ArrayList<CurrentZoneStatus>();
 		
 		ModbusSerialMaster master;
-		SerialParameters params = new SerialParameters(serialDeviceName, 19200, AbstractSerialConnection.FLOW_CONTROL_DISABLED,
+		SerialParameters params = new SerialParameters(serialDeviceName, baudRate, AbstractSerialConnection.FLOW_CONTROL_DISABLED,
 				AbstractSerialConnection.FLOW_CONTROL_DISABLED, 8, AbstractSerialConnection.ONE_STOP_BIT, AbstractSerialConnection.NO_PARITY, false);
 		master = new ModbusSerialMaster(params);
 		master.connect();
@@ -105,7 +107,7 @@ public class MultiZoneDevice {
 	 */
 	private int readSingleFunction03RegisterAsInt(int registerNumber) throws ModbusException, Exception {
 		ModbusSerialMaster master;
-		SerialParameters params = new SerialParameters(serialDeviceName, 19200, AbstractSerialConnection.FLOW_CONTROL_DISABLED,
+		SerialParameters params = new SerialParameters(serialDeviceName, baudRate, AbstractSerialConnection.FLOW_CONTROL_DISABLED,
 				AbstractSerialConnection.FLOW_CONTROL_DISABLED, 8, AbstractSerialConnection.ONE_STOP_BIT, AbstractSerialConnection.NO_PARITY, false);
 		master = new ModbusSerialMaster(params);
 		master.connect();
@@ -119,7 +121,7 @@ public class MultiZoneDevice {
 	
 	private int readSingleFunction04RegisterAsInt(int registerNumber) throws ModbusException, Exception {
 		ModbusSerialMaster master;
-		SerialParameters params = new SerialParameters(serialDeviceName, 19200, AbstractSerialConnection.FLOW_CONTROL_DISABLED,
+		SerialParameters params = new SerialParameters(serialDeviceName, baudRate, AbstractSerialConnection.FLOW_CONTROL_DISABLED,
 				AbstractSerialConnection.FLOW_CONTROL_DISABLED, 8, AbstractSerialConnection.ONE_STOP_BIT, AbstractSerialConnection.NO_PARITY, false);
 		master = new ModbusSerialMaster(params);
 		master.connect();
