@@ -15,6 +15,17 @@ First add the jitpack repository.
 ```
 
 Then include this library as a dependency.
+
+Latest Release:
+```XML
+<dependency>
+    <groupId>com.github.JustBru00</groupId>
+    <artifactId>multizone4j</artifactId>
+    <version>0.1.0</version>
+</dependency>
+```
+
+Development Snapshots:
 ```XML
 <dependency>
     <groupId>com.github.JustBru00</groupId>
