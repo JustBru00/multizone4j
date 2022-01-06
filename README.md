@@ -52,13 +52,8 @@ You can view the release history and roadmap below:
 
 ### Release History
 ```
-Release version 0.1.0-SNAPSHOT:
+Release version 0.1.0:
 + Implemented all of the modbus registers from Manual Section B.4.1.
 + Implemented read only modbus registers from Manual Section B.4.2.
-
-Release version 0.1.0-SNAPSHOT:
-+ Added MultiZoneDevice.getCurrentZoneStatus()
-+ Added MultiZoneDevice.getAllCurrentZoneStatuses()
-These two methods allow the most basic functionality of reading the current parts per million and alarm status from a Bacharach MultiZone device.
 ```
 
