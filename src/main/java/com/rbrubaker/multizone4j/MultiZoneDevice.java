@@ -20,6 +20,8 @@ import com.rbrubaker.multizone4j.reference.RefrigerantType;
  * Baud: Can be set on the Bacharach MultiZone device. The default is 19200.
  * Parity: No Parity Bit
  * Stop Bits: 1 Stop Bit
+ * 
+ * Make sure to call {@link #disconnect()} when you are done using this class.
  * @author Justin Brubaker
  *
  */
@@ -28,6 +30,9 @@ public class MultiZoneDevice {
 	private int modbusAddress;		
 	private String serialDeviceName;
 	private int baudRate = 19200;
+	private ModbusSerialMaster master;
+	private SerialParameters params;
+	
 	
 	public MultiZoneDevice(int _modbusAddress, String _serialDeviceName, int _baudRate) {
 		super();
@@ -35,6 +40,19 @@ public class MultiZoneDevice {
 		serialDeviceName = _serialDeviceName;
 		baudRate = _baudRate;
 	}	
+	
+	public void disconnect() {
+		master.disconnect();
+	}
+	
+	private void checkAndSetupMaster() throws Exception {
+		if (master == null) {
+			params = new SerialParameters(serialDeviceName, baudRate, AbstractSerialConnection.FLOW_CONTROL_DISABLED,
+					AbstractSerialConnection.FLOW_CONTROL_DISABLED, 8, AbstractSerialConnection.ONE_STOP_BIT, AbstractSerialConnection.NO_PARITY, false);
+			master = new ModbusSerialMaster(params);
+			master.connect();
+		}	
+	}
 	
 	/**
 	 * Manual Section B.4.1.
@@ -50,11 +68,7 @@ public class MultiZoneDevice {
 			throw new IllegalArgumentException("The zone number must be between 0-15. The zone number is base 0. Ex. Zone 1 = zoneNumber=0");
 		}
 		
-		ModbusSerialMaster master;
-		SerialParameters params = new SerialParameters(serialDeviceName, baudRate, AbstractSerialConnection.FLOW_CONTROL_DISABLED,
-				AbstractSerialConnection.FLOW_CONTROL_DISABLED, 8, AbstractSerialConnection.ONE_STOP_BIT, AbstractSerialConnection.NO_PARITY, false);
-		master = new ModbusSerialMaster(params);
-		master.connect();
+		checkAndSetupMaster();
 		
 		InputRegister[] ppmRegs = master.readMultipleRegisters(modbusAddress, 2001 + zoneNumber, 1);
 		int ppmZone = ppmRegs[0].getValue();
@@ -63,8 +77,6 @@ public class MultiZoneDevice {
 		int alarmLevel = alarmRegs[0].getValue();
 		
 		CurrentZoneStatus zone = new CurrentZoneStatus(ppmZone, alarmLevel);		
-		
-		master.disconnect();
 		
 		return zone;
 	}
@@ -79,16 +91,10 @@ public class MultiZoneDevice {
 	public ArrayList<CurrentZoneStatus> getAllCurrentZoneStatuses() throws ModbusException, Exception {
 		ArrayList<CurrentZoneStatus> zones = new ArrayList<CurrentZoneStatus>();
 		
-		ModbusSerialMaster master;
-		SerialParameters params = new SerialParameters(serialDeviceName, baudRate, AbstractSerialConnection.FLOW_CONTROL_DISABLED,
-				AbstractSerialConnection.FLOW_CONTROL_DISABLED, 8, AbstractSerialConnection.ONE_STOP_BIT, AbstractSerialConnection.NO_PARITY, false);
-		master = new ModbusSerialMaster(params);
-		master.connect();
+		checkAndSetupMaster();
 		
 		InputRegister[] ppmRegs = master.readMultipleRegisters(modbusAddress, 2001, 16);
 		InputRegister[] alarmRegs = master.readMultipleRegisters(modbusAddress, 2017, 16);
-		
-		master.disconnect();
 		
 		for (int i = 0; i < 16; i++) {
 			CurrentZoneStatus zone = new CurrentZoneStatus(ppmRegs[i].getValue(), alarmRegs[i].getValue());
@@ -106,30 +112,18 @@ public class MultiZoneDevice {
 	 * @throws Exception
 	 */
 	private int readSingleFunction03RegisterAsInt(int registerNumber) throws ModbusException, Exception {
-		ModbusSerialMaster master;
-		SerialParameters params = new SerialParameters(serialDeviceName, baudRate, AbstractSerialConnection.FLOW_CONTROL_DISABLED,
-				AbstractSerialConnection.FLOW_CONTROL_DISABLED, 8, AbstractSerialConnection.ONE_STOP_BIT, AbstractSerialConnection.NO_PARITY, false);
-		master = new ModbusSerialMaster(params);
-		master.connect();
+		checkAndSetupMaster();
 		
 		InputRegister[] reg = master.readMultipleRegisters(modbusAddress, registerNumber, 1);
-		
-		master.disconnect();		
 		
 		return reg[0].getValue();		
 	}
 	
 	private int readSingleFunction04RegisterAsInt(int registerNumber) throws ModbusException, Exception {
-		ModbusSerialMaster master;
-		SerialParameters params = new SerialParameters(serialDeviceName, baudRate, AbstractSerialConnection.FLOW_CONTROL_DISABLED,
-				AbstractSerialConnection.FLOW_CONTROL_DISABLED, 8, AbstractSerialConnection.ONE_STOP_BIT, AbstractSerialConnection.NO_PARITY, false);
-		master = new ModbusSerialMaster(params);
-		master.connect();
+		checkAndSetupMaster();
 		
 		InputRegister[] reg = master.readInputRegisters(modbusAddress, registerNumber, 1);
-		
-		master.disconnect();		
-		
+				
 		return reg[0].getValue();		
 	}
 	
