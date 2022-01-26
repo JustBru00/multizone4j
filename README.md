@@ -21,7 +21,7 @@ Latest Release:
 <dependency>
     <groupId>com.github.JustBru00</groupId>
     <artifactId>multizone4j</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
 </dependency>
 ```
 
