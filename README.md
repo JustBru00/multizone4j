@@ -64,7 +64,7 @@ You can view the release history and roadmap below:
 ### Release History
 ```
 Release version 0.2.0:
-~ Changed the MultiZoneDevice so that is only closes the serial port when requested by the api user.
+~ Changed the MultiZoneDevice so that it only closes the serial port when requested by the api user.
 
 Release version 0.1.0:
 + Implemented all of the modbus registers from Manual Section B.4.1.
